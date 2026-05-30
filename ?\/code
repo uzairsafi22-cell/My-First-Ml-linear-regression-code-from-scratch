@@ -1,0 +1,82 @@
+import numpy as np
+import pandas as pd
+
+class SLR:
+
+    def __init__(self):
+        self.m = None
+        self.b = None
+
+    def fit(self, X_train, y_train):#to find value of m  we will need ((Xi-x)(yi-y)) for numeritor and (Xi-x)2 for denominator 
+
+        num = 0
+        den = 0
+
+        # To find value of m
+        for i in range(X_train.shape[0]):
+
+            # Numerator
+            num = num + ((X_train[i] - X_train.mean()) *
+                         (y_train[i] - y_train.mean()))
+
+            # Denominator
+            den = den + ((X_train[i] - X_train.mean()) ** 2)
+
+        # Formula for m
+        self.m = num / den
+
+        # Formula for b = ȳ - mx̄
+        self.b = y_train.mean() - (self.m * X_train.mean())
+
+        print("m =", self.m)
+        print("b =", self.b)
+
+    def predict(self, X_test):
+
+        return self.m * X_test + self.b
+
+
+# Load dataset
+df = pd.read_csv("Placement.csv")
+
+# Features and Target
+X = df.iloc[:, 0].values
+y = df.iloc[:, 1].values
+
+# Train-Test Split
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=2
+)
+
+# Check shape
+print(X_train.shape)
+
+# Create object
+#to check the shape of X_train
+# we will put print(X_train.shape) in the def fit at the top class
+# aftarwards we will check with class 
+lr = SLR()
+
+# Train model
+lr.fit(X_train, y_train)
+
+# Prediction
+y_pred = lr.predict(X_test)
+
+print(y_pred)
+
+import matplotlib.pyplot as plt
+
+plt.scatter(X_test, y_test)
+plt.plot(X_test, y_pred)
+
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.title("Linear Regression Line")
+
+plt.show()
